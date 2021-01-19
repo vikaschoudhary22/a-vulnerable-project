@@ -25,7 +25,7 @@ jobs:
 
   owasp_report:
     needs: [depCheck]
-    if: "${{ always() }}
+    if: "${{ always() }}"
     runs-on: ubuntu-20.04
     name: Create a report with an overview of the vulnerabilities per dependency
     steps:
