@@ -17,3 +17,32 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: dependencyCheckAnalyze
+      - name: Backup JSON Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: dependency-check-report.json
+          path: ./build/reports/dependency-check-report.json
+
+  owasp_report:
+    needs: [depCheck]
+    runs-on: ubuntu-20.04
+    name: Create a report with an overview of the vulnerabilities per dependency
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: perpk/owasp-report-custom-render
+      - uses: actions/download-artifact@v2
+        with:
+          name: dependency-check-report.json
+          path: ./
+      - name: Perform npm install on checked-out action
+        run: npm install
+      - name: Run Report Creation
+        uses: ./
+        with:
+          owasp-json-report: dependency-check-report.json
+      - name: Upload overview report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Owasp Overview Report
+          path: owasp-report-overview.pdf
